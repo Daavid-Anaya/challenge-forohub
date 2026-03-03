@@ -1,11 +1,11 @@
 -- Tabla Perfil
-CREATE TABLE perfil (
+CREATE TABLE perfiles (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL
 );
 
 -- Tabla Usuario
-CREATE TABLE usuario (
+CREATE TABLE usuarios (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     correo_electronico VARCHAR(150) NOT NULL UNIQUE,
@@ -17,19 +17,19 @@ CREATE TABLE usuario_perfil (
     usuario_id BIGINT NOT NULL,
     perfil_id BIGINT NOT NULL,
     PRIMARY KEY (usuario_id, perfil_id),
-    CONSTRAINT fk_usuario_perfil_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id),
-    CONSTRAINT fk_usuario_perfil_perfil  FOREIGN KEY (perfil_id)  REFERENCES perfil(id)
+    CONSTRAINT fk_usuario_perfil_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    CONSTRAINT fk_usuario_perfil_perfil  FOREIGN KEY (perfil_id)  REFERENCES perfiles(id)
 );
 
 -- Tabla Curso
-CREATE TABLE curso (
+CREATE TABLE cursos (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
     categoria VARCHAR(100) NOT NULL
 );
 
 -- Tabla Tópico
-CREATE TABLE topico (
+CREATE TABLE topicos (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(255) NOT NULL,
     mensaje VARCHAR(400) NOT NULL,
@@ -37,18 +37,18 @@ CREATE TABLE topico (
     status VARCHAR(50) NOT NULL DEFAULT 'ABIERTO',
     autor_id BIGINT NOT NULL,
     curso_id BIGINT NOT NULL,
-    CONSTRAINT fk_topico_autor FOREIGN KEY (autor_id) REFERENCES usuario(id),
-    CONSTRAINT fk_topico_curso FOREIGN KEY (curso_id) REFERENCES curso(id)
+    CONSTRAINT fk_topico_autor FOREIGN KEY (autor_id) REFERENCES usuarios(id),
+    CONSTRAINT fk_topico_curso FOREIGN KEY (curso_id) REFERENCES cursos(id)
 );
 
 -- Tabla Respuesta
-CREATE TABLE respuesta (
+CREATE TABLE respuestas (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     mensaje VARCHAR(400) NOT NULL,
     topico_id BIGINT NOT NULL,
     fecha_creacion  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     autor_id BIGINT NOT NULL,
     solucion BOOLEAN NOT NULL DEFAULT FALSE,
-    CONSTRAINT fk_respuesta_topico FOREIGN KEY (topico_id) REFERENCES topico(id),
-    CONSTRAINT fk_respuesta_autor FOREIGN KEY (autor_id)  REFERENCES usuario(id)
+    CONSTRAINT fk_respuesta_topico FOREIGN KEY (topico_id) REFERENCES topicos(id),
+    CONSTRAINT fk_respuesta_autor FOREIGN KEY (autor_id)  REFERENCES usuarios(id)
 );
