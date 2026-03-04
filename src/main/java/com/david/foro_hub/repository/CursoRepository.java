@@ -6,4 +6,7 @@ import com.david.foro_hub.domain.curso.Curso;
 
 public interface CursoRepository extends JpaRepository<Curso, Long> {
     
+    boolean existsByNombreAndCategoria(String nombre, String categoria);
+    boolean existsByNombreAndCategoriaAndIdNot(String nombre, String categoria, Long id);
+    
 }
