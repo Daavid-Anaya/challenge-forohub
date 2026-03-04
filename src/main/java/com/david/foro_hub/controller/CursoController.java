@@ -80,11 +80,11 @@ public class CursoController {
 
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         return repository.findById(id)
             .map(curso -> {
                 repository.delete(curso);
-                return ResponseEntity.noContent().build(); // 204
+                return ResponseEntity.noContent().<Void>build(); // 204
             })
             .orElse(ResponseEntity.notFound().build()); // 404 si no existe
     }
