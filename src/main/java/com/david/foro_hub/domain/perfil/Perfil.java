@@ -6,7 +6,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "perfiles")
+@Table(name = "perfiles", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"nombre"})
+})
 @Entity(name = "Perfil")
 @Getter
 @NoArgsConstructor
@@ -16,5 +18,15 @@ public class Perfil {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nombre;
-}   
+
+    @Enumerated(EnumType.STRING)
+    private NombrePerfil nombre;
+
+    public Perfil(DatosRegistroActualizacionPerfil datos) {
+        this.nombre = datos.nombre();
+    }
+
+    public void actualizarInformacion(DatosRegistroActualizacionPerfil datos) {
+        this.nombre = datos.nombre();
+    }
+}
