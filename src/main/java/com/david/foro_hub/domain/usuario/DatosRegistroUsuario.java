@@ -12,5 +12,4 @@ public record DatosRegistroUsuario(
     @NotBlank @Email String correoElectronico,
     @NotBlank String contrasena,
     @NotNull @NotEmpty Set<Long> perfilesIds
-
 ) { }

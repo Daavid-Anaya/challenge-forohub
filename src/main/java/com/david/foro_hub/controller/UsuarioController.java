@@ -97,7 +97,7 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         return usuarioRepository.findById(id)
-            .map(usuario ->{
+            .map(usuario -> {
                 usuarioRepository.delete(usuario);
                 return ResponseEntity.noContent().<Void>build(); // 204
             })
