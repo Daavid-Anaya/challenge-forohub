@@ -43,4 +43,21 @@ public class Topico {
 
     @OneToMany(mappedBy = "topico", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Respuesta> respuestas = new HashSet<>();
+
+    public Topico(DatosRegistroTopico datos, Usuario autor, Curso curso) {
+        this.titulo = datos.titulo();
+        this.mensaje = datos.mensaje();
+        this.fechaCreacion = LocalDateTime.now();
+        this.status = datos.status();
+        this.autor = autor;
+        this.curso = curso;
+        this.respuestas = new HashSet<>();
+    }
+
+    public void actualizarInformacion(DatosActualizarTopico datos, Curso curso) {
+        this.titulo = datos.titulo();
+        this.mensaje = datos.mensaje();
+        this.status = datos.status();
+        this.curso = curso;
+    }
 }
