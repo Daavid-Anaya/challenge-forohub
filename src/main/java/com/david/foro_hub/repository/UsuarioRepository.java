@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.david.foro_hub.domain.usuario.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    
+    boolean existsByCorreoElectronico(String correoElectronico);
+    boolean existsByCorreoElectronicoAndIdNot(String correoElectronico, Long id);
 }

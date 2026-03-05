@@ -33,4 +33,24 @@ public class Usuario {
         inverseJoinColumns = @JoinColumn(name = "perfil_id")
     )
     private Set<Perfil> perfiles = new HashSet<>();
+
+    public Usuario(DatosRegistroUsuario datos, Set<Perfil> perfiles) {
+        this.nombre = datos.nombre();
+        this.correoElectronico = datos.correoElectronico();
+        this.contrasena = datos.contrasena();
+        this.perfiles = perfiles;
+    }
+
+    public void actualizarInformacion(DatosActualizarUsuario datos) {
+        if (datos.nombre() != null && !datos.nombre().isBlank()) {
+            this.nombre = datos.nombre().trim();
+        }
+        if (datos.correoElectronico() != null && !datos.correoElectronico().isBlank()) {
+            this.correoElectronico = datos.correoElectronico().trim();
+        }
+        if (datos.contrasena() != null && !datos.contrasena().isBlank()) {
+            // this.contrasena = new BCryptPasswordEncoder().encode(datos.contrasena());
+            this.contrasena = datos.contrasena().trim();
+        }
+    }
 }
