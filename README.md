@@ -35,13 +35,17 @@ Al final de nuestro desarrollo tendremos una API REST con las siguientes funcion
 ---
 ## ✨ Características Funcionalidades de la API
 
-|     Recurso    | Crear | Listar todos | Ver uno | Actualizar | Eliminar |
-|----------------|:-----:|:------------:|:-------:|:----------:|:--------:|
-|  📌 Tópicos   |   ✅  |      ✅     |    ✅   |     ✅    |    ✅    |
-| 💬 Respuestas |   ✅  |      ✅     |    ✅   |     ✅    |    ✅    |
-|   📚 Cursos   |   ✅  |      ✅     |    ✅   |     ✅    |    ✅    |
-|  👤 Usuarios  |   ✅  |      ✅     |    ✅   |     ✅    |    ✅    |
-|  🔖 Perfiles  |   ✅  |      ✅     |    ✅   |     ✅    |    ✅    |
+<div align="center">
+
+  |     Recurso    | Crear | Listar todos | Ver uno | Actualizar | Eliminar |
+  |----------------|:-----:|:------------:|:-------:|:----------:|:--------:|
+  |  📌 Tópicos   |   ✅  |      ✅     |    ✅   |     ✅    |    ✅    |
+  | 💬 Respuestas |   ✅  |      ✅     |    ✅   |     ✅    |    ✅    |
+  |   📚 Cursos   |   ✅  |      ✅     |    ✅   |     ✅    |    ✅    |
+  |  👤 Usuarios  |   ✅  |      ✅     |    ✅   |     ✅    |    ✅    |
+  |  🔖 Perfiles  |   ✅  |      ✅     |    ✅   |     ✅    |    ✅    |
+
+</div>
 
 ### 🔑 Resumen de permisos por perfil
 
@@ -53,22 +57,26 @@ Al final de nuestro desarrollo tendremos una API REST con las siguientes funcion
 
 De acuerdo a los 3 perfiles del sistema (*ROLE_ADMIN, ROLE_USER, ROLE_MODERADOR*), la configuración de accesos es la siguiente:
 
-|    Recurso    |   Acción  | ADMIN | MODERADOR | USER |
-|---------------|-----------|-------|-----------|------|
-|    `/auth`    |    POST   |  ✅  |     ✅    |  ✅  |
-|  `/perfiles`  |    GET    |  ✅  |    ✅     |  ❌  |
-|  `/perfiles`  | POST/PUT/DELETE | ✅ |    ❌    |  ❌  |
-|   `/cursos`   |    GET    |  ✅  |     ✅    |  ✅  |
-|   `/cursos`   | POST/PUT/DELETE | ✅ |    ❌    |  ❌  |
-|  `/usuarios`  |    GET    |  ✅  |     ✅    |  ❌  |
-|  `/usuarios`  |    PUT    |  ✅  |     ❌    |  ✅  |
-|  `/usuarios`  |   DELETE  |  ✅  |     ❌    |  ❌  |
-|  `/topicos`   |  GET/POST |  ✅  |     ✅    |  ✅  |
-|  `/topicos`   |    PUT    |  ✅  |     ✅    |  ❌  |
-|  `/topicos`   |   DELETE  |  ✅  |     ❌    |  ❌  |
-| `/respuestas` | GET/POST  |  ✅  |     ✅    |  ✅  |
-| `/respuestas` |    PUT    |  ✅  |     ✅    |  ✅  |
-| `/respuestas` |   DELETE  |  ✅  |     ❌    |  ❌  |
+<div align="center">
+  
+  |    Recurso    |   Acción  | ADMIN | MODERADOR | USER |
+  |---------------|-----------|-------|-----------|------|
+  |    `/auth`    |    POST   |  ✅  |     ✅    |  ✅  |
+  |  `/perfiles`  |    GET    |  ✅  |    ✅     |  ❌  |
+  |  `/perfiles`  | POST/PUT/DELETE | ✅ |    ❌    |  ❌  |
+  |   `/cursos`   |    GET    |  ✅  |     ✅    |  ✅  |
+  |   `/cursos`   | POST/PUT/DELETE | ✅ |    ❌    |  ❌  |
+  |  `/usuarios`  |    GET    |  ✅  |     ✅    |  ❌  |
+  |  `/usuarios`  |    PUT    |  ✅  |     ❌    |  ✅  |
+  |  `/usuarios`  |   DELETE  |  ✅  |     ❌    |  ❌  |
+  |  `/topicos`   |  GET/POST |  ✅  |     ✅    |  ✅  |
+  |  `/topicos`   |    PUT    |  ✅  |     ✅    |  ❌  |
+  |  `/topicos`   |   DELETE  |  ✅  |     ❌    |  ❌  |
+  | `/respuestas` | GET/POST  |  ✅  |     ✅    |  ✅  |
+  | `/respuestas` |    PUT    |  ✅  |     ✅    |  ✅  |
+  | `/respuestas` |   DELETE  |  ✅  |     ❌    |  ❌  |
+  
+</div>
 
 ---
 ## 🖥 Tecnologías utilizadas
@@ -118,18 +126,22 @@ FORO-HUB/
 
 ### 📦 Descripción de Paquetes
 
-|       Paquete      |                                                           Descripción                                                             |
-|--------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-|    `controller`    | Contiene los controladores REST que exponen los endpoints de la API. Reciben las solicitudes HTTP y delegan la lógica al dominio. |
-|   `domain/curso`   |                   Gestiona la entidad `Curso`, incluyendo sus DTOs, validaciones y reglas de negocio asociadas.                   |
-|   `domain/perfil`  |                       Gestiona la entidad `Perfil`, que define los roles o tipos de usuario dentro del sistema.                   |
-| `domain/respuesta` |                Gestiona la entidad `Respuesta`, que representa los mensajes de reply dentro de un tópico del foro.                |
-|  `domain/topicos`  |               Gestiona la entidad `Topico`, núcleo del foro: creación, actualización, cierre y eliminación de hilos.              |
-|  `domain/usuario`  |                       Gestiona la entidad `Usuario`, incluyendo autenticación y datos del perfil de cuenta.                       |
-| `infra/exceptions` |           Centraliza el manejo de errores mediante `@RestControllerAdvice`, devolviendo respuestas HTTP estandarizadas.           |
-|  `infra/security`  |                     Configura Spring Security: autenticación JWT, filtros de seguridad y protección de rutas.                     |
-|    `repository`    |         Interfaces que extienden `JpaRepository` para las operaciones CRUD y consultas personalizadas a la base de datos.         |
-|   `db/migration`   |          Scripts SQL versionados gestionados por **Flyway** para el control de cambios en el esquema de la base de datos.         |
+<div align="center">
+
+  |       Paquete      |                                                           Descripción                                                             |
+  |--------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+  |    `controller`    | Contiene los controladores REST que exponen los endpoints de la API. Reciben las solicitudes HTTP y delegan la lógica al dominio. |
+  |   `domain/curso`   |                   Gestiona la entidad `Curso`, incluyendo sus DTOs, validaciones y reglas de negocio asociadas.                   |
+  |   `domain/perfil`  |                       Gestiona la entidad `Perfil`, que define los roles o tipos de usuario dentro del sistema.                   |
+  | `domain/respuesta` |                Gestiona la entidad `Respuesta`, que representa los mensajes de reply dentro de un tópico del foro.                |
+  |  `domain/topicos`  |               Gestiona la entidad `Topico`, núcleo del foro: creación, actualización, cierre y eliminación de hilos.              |
+  |  `domain/usuario`  |                       Gestiona la entidad `Usuario`, incluyendo autenticación y datos del perfil de cuenta.                       |
+  | `infra/exceptions` |           Centraliza el manejo de errores mediante `@RestControllerAdvice`, devolviendo respuestas HTTP estandarizadas.           |
+  |  `infra/security`  |                     Configura Spring Security: autenticación JWT, filtros de seguridad y protección de rutas.                     |
+  |    `repository`    |         Interfaces que extienden `JpaRepository` para las operaciones CRUD y consultas personalizadas a la base de datos.         |
+  |   `db/migration`   |          Scripts SQL versionados gestionados por **Flyway** para el control de cambios en el esquema de la base de datos.         |
+  
+</div>
 
 ---
 ## 🖥 Screenshots
@@ -175,12 +187,16 @@ Antes de comenzar, asegúrate de tener instalado lo siguiente en tu entorno loca
 Antes de ejecutar el proyecto, define las siguientes variables de entorno.
 Si no se definen, se usarán los valores por defecto indicados.
 
-|    Variable   |                Descripción               |              Valor por defecto           |
-|---------------|------------------------------------------|------------------------------------------|
-|    `DB_URL`   |    URL de conexión a la base de datos    | `jdbc:mysql://localhost:3306/forohub_db` |
-| `DB_USERNAME` |             Usuario de MySQL             |                     —                    |
-| `DB_PASSWORD` |           Contraseña de MySQL            |                     —                    |
-|  `JWT_SECRET` | Clave secreta para firmar los tokens JWT |                `12345678`                |
+<div align="center">
+
+  |    Variable   |                Descripción               |              Valor por defecto           |
+  |---------------|------------------------------------------|------------------------------------------|
+  |    `DB_URL`   |    URL de conexión a la base de datos    | `jdbc:mysql://localhost:3306/forohub_db` |
+  | `DB_USERNAME` |             Usuario de MySQL             |                     —                    |
+  | `DB_PASSWORD` |           Contraseña de MySQL            |                     —                    |
+  |  `JWT_SECRET` | Clave secreta para firmar los tokens JWT |                `12345678`                |
+
+</div>
 
 > ⚠️ **Importante:** Se recomienda definir siempre `DB_USERNAME`, `DB_PASSWORD`
 > y `JWT_SECRET` como variables de entorno reales en producción,
