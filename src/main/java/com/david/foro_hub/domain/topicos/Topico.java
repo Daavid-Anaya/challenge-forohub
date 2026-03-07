@@ -40,6 +40,7 @@ public class Topico {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id")
     private Curso curso;
+    private Boolean activo = true;
 
     @OneToMany(mappedBy = "topico", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Respuesta> respuestas = new HashSet<>();
@@ -59,5 +60,9 @@ public class Topico {
         this.mensaje = datos.mensaje();
         this.status = datos.status();
         this.curso = curso;
+    }
+
+    public void desactivar() {
+        this.activo = false;
     }
 }

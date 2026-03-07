@@ -20,13 +20,13 @@ public class Perfil {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private NombrePerfil nombre;
+    private NombrePerfil rol;
 
     public Perfil(DatosRegistroActualizacionPerfil datos) {
-        this.nombre = datos.nombre();
+        this.rol = datos.rol();
     }
 
     public void actualizarInformacion(DatosRegistroActualizacionPerfil datos) {
-        this.nombre = datos.nombre();
+        this.rol = datos.rol();
     }
 }

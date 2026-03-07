@@ -17,7 +17,7 @@ public record DatosUsuario(
         usuario.getNombre(),
         usuario.getCorreoElectronico(),
         usuario.getPerfiles().stream()
-            .map(Perfil::getNombre)
+            .map(Perfil::getRol)
             .collect(Collectors.toSet())
         );
     }

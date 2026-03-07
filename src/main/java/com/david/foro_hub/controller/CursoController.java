@@ -56,7 +56,7 @@ public class CursoController {
 
     @GetMapping
     public ResponseEntity<Page<DatosCurso>> listar(@PageableDefault(size = 10, sort = "nombre") Pageable paginacion) {
-        var page = repository.findAll(paginacion).map(DatosCurso::new);
+        var page = repository.findByActivoTrue(paginacion).map(DatosCurso::new);
 
         return ResponseEntity.ok(page);
     }
@@ -83,7 +83,7 @@ public class CursoController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         return repository.findById(id)
             .map(curso -> {
-                repository.delete(curso);
+                curso.desactivar();
                 return ResponseEntity.noContent().<Void>build(); // 204
             })
             .orElse(ResponseEntity.notFound().build()); // 404 si no existe

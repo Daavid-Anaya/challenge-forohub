@@ -40,6 +40,7 @@ public class Usuario implements UserDetails {
         inverseJoinColumns = @JoinColumn(name = "perfil_id")
     )
     private Set<Perfil> perfiles = new HashSet<>();
+    private Boolean activo = true;
 
     public Usuario(DatosRegistroUsuario datos, Set<Perfil> perfiles, String contrasena) {
         this.nombre = datos.nombre();
@@ -63,7 +64,7 @@ public class Usuario implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return perfiles.stream()
-            .map(perfil -> new SimpleGrantedAuthority(perfil.getNombre().name()))
+            .map(perfil -> new SimpleGrantedAuthority(perfil.getRol().name()))
             .collect(Collectors.toList());
     }
 
@@ -95,5 +96,9 @@ public class Usuario implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }   
+    }
+    
+    public void desactivar() {
+        this.activo = false;
+    }
 }

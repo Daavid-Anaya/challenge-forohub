@@ -6,6 +6,6 @@ import com.david.foro_hub.domain.perfil.NombrePerfil;
 import com.david.foro_hub.domain.perfil.Perfil;
 
 public interface PerfilRepository extends JpaRepository<Perfil, Long> {
-    boolean existsByNombre(NombrePerfil nombre);
-    boolean existsByNombreAndIdNot(NombrePerfil nombre, Long id);
+    boolean existsByRol(NombrePerfil rol);
+    boolean existsByRolAndIdNot(NombrePerfil rol, Long id);
 }

@@ -75,7 +75,7 @@ public class UsuarioController {
 
     @GetMapping
     public ResponseEntity<Page<DatosUsuario>> listar(@PageableDefault(size = 10, sort = "nombre") Pageable paginacion) {
-        var page = usuarioRepository.findAll(paginacion).map(DatosUsuario::new);
+        var page = usuarioRepository.findByActivoTrue(paginacion).map(DatosUsuario::new);
 
         return ResponseEntity.ok(page);
     }
@@ -112,7 +112,7 @@ public class UsuarioController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         return usuarioRepository.findById(id)
             .map(usuario -> {
-                usuarioRepository.delete(usuario);
+                usuario.desactivar();
                 return ResponseEntity.noContent().<Void>build(); // 204
             })
             .orElse(ResponseEntity.notFound().build()); // 404

@@ -36,6 +36,7 @@ public class Respuesta {
     private Usuario autor;
     
     private Boolean solucion;
+    private Boolean activo = true;
 
     public Respuesta(DatosRegistroRespuesta datos, Topico topico, Usuario autor) {
         this.mensaje = datos.mensaje();
@@ -48,5 +49,9 @@ public class Respuesta {
     public void actualizarInformacion(DatosActualizarRespuesta datos) {
         this.mensaje = datos.mensaje();
         this.solucion = datos.solucion();
+    }
+
+    public void desactivar() {
+        this.activo = false;
     }
 }

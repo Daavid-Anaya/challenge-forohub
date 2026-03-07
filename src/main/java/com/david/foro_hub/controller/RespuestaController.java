@@ -71,7 +71,7 @@ public class RespuestaController {
 
     @GetMapping
     public ResponseEntity<Page<DatosRespuesta>> listar(@PageableDefault(size = 10, sort = "fechaCreacion") Pageable paginacion) {
-        var page = respuestaRepository.findAll(paginacion).map(DatosRespuesta::new);
+        var page = respuestaRepository.findByActivoTrue(paginacion).map(DatosRespuesta::new);
 
         return ResponseEntity.ok(page);
     }
@@ -93,7 +93,7 @@ public class RespuestaController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         return respuestaRepository.findById(id)
             .map(respuesta -> {
-                respuestaRepository.delete(respuesta);
+                respuesta.desactivar();
                 return ResponseEntity.noContent().<Void>build(); // 204
             })
             .orElse(ResponseEntity.notFound().build()); // 404

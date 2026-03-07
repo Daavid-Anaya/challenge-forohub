@@ -34,7 +34,7 @@ public class PerfilController {
     @Transactional
     @PostMapping
     public ResponseEntity<DatosPerfil> registrar(@RequestBody @Valid DatosRegistroActualizacionPerfil datos, UriComponentsBuilder uriComponentBuilder) {
-        if (repository.existsByNombre(datos.nombre())) {
+        if (repository.existsByRol(datos.rol())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 si ya existe un perfil con el mismo nombre
         }
         
@@ -54,7 +54,7 @@ public class PerfilController {
     }
     
     @GetMapping
-    public ResponseEntity<Page<DatosPerfil>> listar(@PageableDefault(size = 10, sort = "nombre") Pageable paginacion) {
+    public ResponseEntity<Page<DatosPerfil>> listar(@PageableDefault(size = 10, sort = "rol") Pageable paginacion) {
         var page = repository.findAll(paginacion).map(DatosPerfil::new);
         
         return ResponseEntity.ok(page); // 200
@@ -69,7 +69,7 @@ public class PerfilController {
             return ResponseEntity.notFound().build(); // 404
         }
 
-        if (repository.existsByNombreAndIdNot(datos.nombre(), id)) {
+        if (repository.existsByRolAndIdNot(datos.rol(), id)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409
         }
 

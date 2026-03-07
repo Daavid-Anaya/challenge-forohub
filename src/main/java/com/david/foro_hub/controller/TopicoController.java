@@ -78,7 +78,7 @@ public class TopicoController {
 
     @GetMapping()
     public ResponseEntity<Page<DatosTopico>> listar(@PageableDefault(size = 10, sort = "titulo") Pageable paginacion) {
-        var page = topicoRepository.findAll(paginacion).map(DatosTopico::new);
+        var page = topicoRepository.findByActivoTrue(paginacion).map(DatosTopico::new);
 
         return ResponseEntity.ok(page);
     }
@@ -113,7 +113,7 @@ public class TopicoController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         return topicoRepository.findById(id)
             .map(topico -> {
-                topicoRepository.delete(topico);
+                topico.desactivar();
                 return ResponseEntity.noContent().<Void>build(); // 204
             })
             .orElse(ResponseEntity.notFound().build()); // 404

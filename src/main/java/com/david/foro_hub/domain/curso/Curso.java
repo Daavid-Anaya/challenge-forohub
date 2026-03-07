@@ -23,6 +23,7 @@ public class Curso {
     private Long id;
     private String nombre;
     private String categoria;
+    private Boolean activo = true;
 
     public Curso(DatosRegistroCurso datos) {
         this.nombre = datos.nombre();
@@ -37,5 +38,9 @@ public class Curso {
         if (datos.categoria() != null && !datos.categoria().isBlank()) {
             this.categoria = datos.categoria().trim();
         }
+    }
+
+    public void desactivar() {
+        this.activo = false;
     }
 }
