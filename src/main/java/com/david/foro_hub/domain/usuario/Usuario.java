@@ -1,7 +1,14 @@
 package com.david.foro_hub.domain.usuario;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.david.foro_hub.domain.perfil.Perfil;
 
@@ -17,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Usuario {
+public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,7 +33,7 @@ public class Usuario {
     private String correoElectronico;
     private String contrasena;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "usuario_perfil",
         joinColumns = @JoinColumn(name = "usuario_id"),
@@ -34,10 +41,10 @@ public class Usuario {
     )
     private Set<Perfil> perfiles = new HashSet<>();
 
-    public Usuario(DatosRegistroUsuario datos, Set<Perfil> perfiles) {
+    public Usuario(DatosRegistroUsuario datos, Set<Perfil> perfiles, String contrasena) {
         this.nombre = datos.nombre();
         this.correoElectronico = datos.correoElectronico();
-        this.contrasena = datos.contrasena();
+        this.contrasena = contrasena;
         this.perfiles = perfiles;
     }
 
@@ -49,8 +56,44 @@ public class Usuario {
             this.correoElectronico = datos.correoElectronico().trim();
         }
         if (datos.contrasena() != null && !datos.contrasena().isBlank()) {
-            // this.contrasena = new BCryptPasswordEncoder().encode(datos.contrasena());
-            this.contrasena = datos.contrasena().trim();
+            this.contrasena = datos.contrasena();
         }
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return perfiles.stream()
+            .map(perfil -> new SimpleGrantedAuthority(perfil.getNombre().name()))
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public @Nullable String getPassword() {
+        return contrasena;
+    }
+
+    @Override
+    public String getUsername() {
+        return correoElectronico;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }   
 }

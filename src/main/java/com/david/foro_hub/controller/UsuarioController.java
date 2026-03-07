@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,9 @@ public class UsuarioController {
     @Autowired
     private PerfilRepository perfilRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Transactional
     @PostMapping
     public ResponseEntity<DatosUsuario> registrar(@RequestBody @Valid DatosRegistroUsuario datos, UriComponentsBuilder uriComponentBuilder) {
@@ -52,7 +56,9 @@ public class UsuarioController {
             return ResponseEntity.badRequest().build(); // 400
         }
 
-        var usuario = new Usuario(datos, new HashSet<>(perfiles));
+        var contrasenaEncriptada = passwordEncoder.encode(datos.contrasena());
+
+        var usuario = new Usuario(datos, new HashSet<>(perfiles), contrasenaEncriptada);
         usuarioRepository.save(usuario);
 
         var uri = uriComponentBuilder.path("/usuarios/{id}").buildAndExpand(usuario.getId()).toUri();
@@ -86,6 +92,14 @@ public class UsuarioController {
             if (datos.correoElectronico() != null &&
                     usuarioRepository.existsByCorreoElectronicoAndIdNot(datos.correoElectronico(), id)) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409
+            }
+
+            if (datos.contrasena() != null && !datos.contrasena().isBlank()) {
+                datos = new DatosActualizarUsuario(
+                    datos.nombre(),
+                    datos.correoElectronico(),
+                    passwordEncoder.encode(datos.contrasena())
+                );
             }
 
             var u = usuario.get();
