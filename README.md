@@ -148,16 +148,16 @@ FORO-HUB/
 
 <table align="center">
   <tr>
-    <td align="center"><img src="" alt="Crear tópico" width="450"><br><sub><b>Crear un nuevo tópico</b></sub></td>
-    <td align="center"><img src="" alt="Mostrar los tópicos" width="450"><br><sub><b>Mostrar todos los tópicos creados</b></sub></td>
+    <td align="center"><img src="./img/autenticacion-user.jpg" alt="Autenticación" width="500"><br><sub><b>Autenticación de usuario</b></sub></td>
+    <td align="center"><img src="./img/registrar-topico.jpg" alt="Crear tópico" width="550"><br><sub><b>Crear un nuevo tópico</b></sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="" alt="Tópico específico" width="450"><br><sub><b>Mostrar un tópico específico</b></sub></td>
-    <td align="center"><img src="" alt="Actualizar tópico" width="450"><br><sub><b>Actualizar un tópico</b></sub></td>
+    <td align="center"><img src="./img/listar-topicos.jpg" alt="Listar los tópicos" width="550"><br><sub><b>Listar todos los tópicos creados</b></sub></td>
+    <td align="center"><img src="./img/detallar-topico.jpg" alt="Consultar un tópico" width="550"><br><sub><b>Consultar un tópico específico</b></sub></td>
   </tr>
    <tr>
-    <td align="center"><img src="" alt="Eliminar tópico" width="500"><br><sub><b>Eliminar un tópico</b></sub></td>
-    <td align="center"><img src="" alt="" width="200"><br><sub><b></b></sub></td>
+     <td align="center"><img src="./img/actualizar-topico.jpg" alt="Actualizar tópico" width="550"><br><sub><b>Actualizar un tópico</b></sub></td>
+     <td align="center"><img src="./img/eliminar-topico.jpg" alt="Eliminar tópico" width="550"><br><sub><b>Eliminar un tópico</b></sub></td>
   </tr>
 </table>
 
