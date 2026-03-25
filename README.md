@@ -1,7 +1,7 @@
 <h1 align="center">Challenge ForoHub</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/STATUS-EN DESARROLLO-blue">
+  <img src="https://img.shields.io/badge/STATUS-Finalizado-blue">
 </p>
 
 Con este desafío propuesto en la Formación de Java y Spring Boot, creando una API REST. Se busca poner en práctica conceptos avanzados de Java y Spring Boot, Como la creación de endpoints, implementación de capas de seguridad, entre otros.
