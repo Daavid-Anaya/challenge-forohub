@@ -1,13 +1,14 @@
 package com.david.foro_hub.controller;
 
 import java.util.HashSet;
+import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.david.foro_hub.domain.perfil.NombrePerfil;
 import com.david.foro_hub.domain.usuario.DatosActualizarUsuario;
 import com.david.foro_hub.domain.usuario.DatosRegistroUsuario;
 import com.david.foro_hub.domain.usuario.DatosUsuario;
@@ -32,15 +34,15 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
-    
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final PerfilRepository perfilRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PerfilRepository perfilRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UsuarioController(UsuarioRepository usuarioRepository, PerfilRepository perfilRepository, PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
+        this.perfilRepository = perfilRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Transactional
     @PostMapping
@@ -50,15 +52,12 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409
         }
 
-        // Buscar perfiles por IDs
-        var perfiles = perfilRepository.findAllById(datos.perfilesIds());
-        if (perfiles.size() != datos.perfilesIds().size()) {
-            return ResponseEntity.badRequest().build(); // 400
-        }
+        var perfilUsuario = perfilRepository.findByRol(NombrePerfil.ROLE_USER)
+                .orElseThrow(() -> new IllegalStateException("Default ROLE_USER profile is not configured"));
 
         var contrasenaEncriptada = passwordEncoder.encode(datos.contrasena());
 
-        var usuario = new Usuario(datos, new HashSet<>(perfiles), contrasenaEncriptada);
+        var usuario = new Usuario(datos, new HashSet<>(Set.of(perfilUsuario)), contrasenaEncriptada);
         usuarioRepository.save(usuario);
 
         var uri = uriComponentBuilder.path("/usuarios/{id}").buildAndExpand(usuario.getId()).toUri();
@@ -82,11 +81,16 @@ public class UsuarioController {
 
     @Transactional
     @PutMapping("/{id}")
-    public ResponseEntity<DatosUsuario> actualizar(@PathVariable Long id, @RequestBody @Valid DatosActualizarUsuario datos) {
+    public ResponseEntity<DatosUsuario> actualizar(@PathVariable Long id, @RequestBody @Valid DatosActualizarUsuario datos,
+            @AuthenticationPrincipal Usuario principal) {
             var usuario = usuarioRepository.findById(id);
 
             if (usuario.isEmpty()) {
                 return ResponseEntity.notFound().build(); // 404
+            }
+
+            if (!isAdmin(principal) && !id.equals(principal.getId())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403
             }
 
             if (datos.correoElectronico() != null &&
@@ -105,6 +109,11 @@ public class UsuarioController {
             var u = usuario.get();
             u.actualizarInformacion(datos);
             return ResponseEntity.ok(new DatosUsuario(u)); // 200
+    }
+
+    private boolean isAdmin(Usuario usuario) {
+        return usuario.getAuthorities().stream()
+                .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()));
     }
 
     @Transactional

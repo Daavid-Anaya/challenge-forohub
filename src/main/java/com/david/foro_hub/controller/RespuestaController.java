@@ -1,10 +1,11 @@
 package com.david.foro_hub.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ import com.david.foro_hub.domain.respuesta.DatosActualizarRespuesta;
 import com.david.foro_hub.domain.respuesta.DatosRegistroRespuesta;
 import com.david.foro_hub.domain.respuesta.DatosRespuesta;
 import com.david.foro_hub.domain.respuesta.Respuesta;
+import com.david.foro_hub.domain.usuario.Usuario;
 import com.david.foro_hub.repository.RespuestaRepository;
 import com.david.foro_hub.repository.TopicoRepository;
 import com.david.foro_hub.repository.UsuarioRepository;
@@ -29,19 +31,24 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/respuestas")
 public class RespuestaController {
-    
-    @Autowired
-    private RespuestaRepository respuestaRepository;
+    private final RespuestaRepository respuestaRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final TopicoRepository topicoRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private TopicoRepository topicoRepository;
+    public RespuestaController(RespuestaRepository respuestaRepository, UsuarioRepository usuarioRepository, TopicoRepository topicoRepository) {
+        this.respuestaRepository = respuestaRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.topicoRepository = topicoRepository;
+    }
     
     @Transactional
     @PostMapping
-    public ResponseEntity<DatosRespuesta> registrar(@RequestBody @Valid DatosRegistroRespuesta datos , UriComponentsBuilder uriComponentBuilder) {
+    public ResponseEntity<DatosRespuesta> registrar(@RequestBody @Valid DatosRegistroRespuesta datos,
+            UriComponentsBuilder uriComponentBuilder, @AuthenticationPrincipal Usuario principal) {
+        if (isRegularUser(principal) && !datos.autorId().equals(principal.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403
+        }
+
         // Verificar que el tópico existe
         var topico = topicoRepository.findById(datos.topicoId());
         if (topico.isEmpty()) {
@@ -78,9 +85,14 @@ public class RespuestaController {
 
     @Transactional
     @PutMapping("/{id}")
-    public ResponseEntity<DatosRespuesta> actualizar(@PathVariable Long id, @RequestBody @Valid DatosActualizarRespuesta datos) {
+    public ResponseEntity<DatosRespuesta> actualizar(@PathVariable Long id, @RequestBody @Valid DatosActualizarRespuesta datos,
+            @AuthenticationPrincipal Usuario principal) {
         return respuestaRepository.findById(id)
             .map(respuesta -> {
+                if (!canManageResponses(principal) && !respuesta.getAutor().getId().equals(principal.getId())) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).<DatosRespuesta>build();
+                }
+
                 respuesta.actualizarInformacion(datos);
                 return ResponseEntity.ok(new DatosRespuesta(respuesta));
             })
@@ -97,5 +109,19 @@ public class RespuestaController {
                 return ResponseEntity.noContent().<Void>build(); // 204
             })
             .orElse(ResponseEntity.notFound().build()); // 404
+    }
+
+    private boolean isRegularUser(Usuario usuario) {
+        return hasAuthority(usuario, "ROLE_USER")
+                && !canManageResponses(usuario);
+    }
+
+    private boolean canManageResponses(Usuario usuario) {
+        return hasAuthority(usuario, "ROLE_ADMIN") || hasAuthority(usuario, "ROLE_MODERADOR");
+    }
+
+    private boolean hasAuthority(Usuario usuario, String authorityName) {
+        return usuario.getAuthorities().stream()
+                .anyMatch(authority -> authorityName.equals(authority.getAuthority()));
     }
 }

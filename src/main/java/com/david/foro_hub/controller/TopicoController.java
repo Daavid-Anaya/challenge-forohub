@@ -1,11 +1,11 @@
 package com.david.foro_hub.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +21,7 @@ import com.david.foro_hub.domain.topicos.DatosActualizarTopico;
 import com.david.foro_hub.domain.topicos.DatosRegistroTopico;
 import com.david.foro_hub.domain.topicos.DatosTopico;
 import com.david.foro_hub.domain.topicos.Topico;
+import com.david.foro_hub.domain.usuario.Usuario;
 import com.david.foro_hub.repository.CursoRepository;
 import com.david.foro_hub.repository.TopicoRepository;
 import com.david.foro_hub.repository.UsuarioRepository;
@@ -30,25 +31,30 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/topicos")
 public class TopicoController {
-    
-    @Autowired
-    private TopicoRepository topicoRepository;
+    private final TopicoRepository topicoRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final CursoRepository cursoRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private CursoRepository cursoRepository;
+    public TopicoController(TopicoRepository topicoRepository, UsuarioRepository usuarioRepository, CursoRepository cursoRepository) {
+        this.topicoRepository = topicoRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.cursoRepository = cursoRepository;
+    }
 
     @Transactional
     @PostMapping
-    public ResponseEntity<DatosTopico> registrar(@RequestBody @Valid DatosRegistroTopico datos, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<DatosTopico> registrar(@RequestBody @Valid DatosRegistroTopico datos,
+            UriComponentsBuilder uriComponentsBuilder, @AuthenticationPrincipal Usuario principal) {
         // Verificar topico duplicado
         if (topicoRepository.existsByTituloAndMensaje(datos.titulo(), datos.mensaje())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409
         }
 
-         // Verificar que el autor existe
+        if (isRegularUser(principal) && !datos.autorId().equals(principal.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403
+        }
+
+          // Verificar que el autor existe
         var autor = usuarioRepository.findById(datos.autorId());
         if (autor.isEmpty()) {
             return ResponseEntity.badRequest().build(); // 400
@@ -117,5 +123,16 @@ public class TopicoController {
                 return ResponseEntity.noContent().<Void>build(); // 204
             })
             .orElse(ResponseEntity.notFound().build()); // 404
+    }
+
+    private boolean isRegularUser(Usuario usuario) {
+        return hasAuthority(usuario, "ROLE_USER")
+                && !hasAuthority(usuario, "ROLE_ADMIN")
+                && !hasAuthority(usuario, "ROLE_MODERADOR");
+    }
+
+    private boolean hasAuthority(Usuario usuario, String authorityName) {
+        return usuario.getAuthorities().stream()
+                .anyMatch(authority -> authorityName.equals(authority.getAuthority()));
     }
 }

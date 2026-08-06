@@ -95,7 +95,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return Boolean.TRUE.equals(activo);
     }
     
     public void desactivar() {
